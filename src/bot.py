@@ -7,31 +7,19 @@ TOKEN = 'Your bot token'
 # 接続に必要なオブジェクトを生成
 client = discord.Client()
 
-# 起動時に動作する処理
-@client.event
-async def on_ready():
-    # 起動したらターミナルにログイン通知が表示される
-    print('ログインしました')
+class MentionNero:
 
-# メッセージ受信時に動作する処理
-@client.event
-async def on_message(message):
-    # メッセージ送信者がBotだった場合は無視する
-    if message.author.bot:
-        return
-    # 「/neko」と発言したら「にゃーん」が返る処理
-    if message.content == '/neko':
+    server_name = 'Your server name'
+    voice_channel_name = 'Your channel name'
+    text_channel_name = 'Your text name'
 
-        server_name = 'Your server name'
-        voice_channel_name = 'Your voice channel'
-        text_channel_name = 'Your text channel'
-
-        guild = discord.utils.get(client.guilds, name=server_name)
+    def send_message(self):
+        guild = discord.utils.get(client.guilds, name=self.server_name)
         print(guild)
 
-        voice_channel = discord.utils.get(guild.voice_channels, name=voice_channel_name)
+        voice_channel = discord.utils.get(guild.voice_channels, name=self.voice_channel_name)
         
-        text_channel = discord.utils.get(guild.text_channels, name=text_channel_name)
+        text_channel = discord.utils.get(guild.text_channels, name=self.text_channel_name)
 
         # VCに参加している人のID取得
         member = voice_channel.voice_states.keys()
@@ -45,7 +33,25 @@ async def on_message(message):
             member_mention.append(member)
 
         # Botからメンション飛ばす
-        await text_channel.send( str(" ".join(member_mention)) + " そろそろ寝ませんか？")
+        return text_channel.send( str(" ".join(member_mention)) + " そろそろ寝ませんか？")
 
+# 起動時に動作する処理
+@client.event
+async def on_ready():
+    # 起動したらターミナルにログイン通知が表示される
+    print('ログインしました')
+
+# メッセージ受信時に動作する処理
+@client.event
+async def on_message(message):
+    # メッセージ送信者がBotだった場合は無視する
+    if message.author.bot:
+        return
+    # 「/neko」と発言したらVCにいる人にメンションを飛ばす
+    if message.content == '/neko':
+        nero = MentionNero()
+
+        await nero.send_message()
+    
 # Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
