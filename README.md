@@ -20,10 +20,18 @@ docker exec -it bot bash
 
 ## How to use
 
-[/src/token/token](./src/token/token)へBotのTokenを記載しておくこと
+[/src/env/env](./src/env/env)へ各種設定を記載
+
+```text
+Botトークン
+サーバー名
+Botがメンションを飛ばすためのテキストチャンネル名
+```
+
+下記コマンドでBot起動
 
 ```bash
-python bot.py ./token/token
+python bot.py ./env/env
 ```
 
 ## 参考
