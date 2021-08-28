@@ -31,7 +31,7 @@ Botがメンションを飛ばすためのテキストチャンネル名
 下記コマンドでBot起動
 
 ```bash
-python bot.py ./env/env
+python bot_timer.py ./env/env
 ```
 
 ## 参考

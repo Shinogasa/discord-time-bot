@@ -23,43 +23,43 @@ class MentionToVocechannelMembers:
         self.voice_channel_name = voice_channel_name
         self.text_channel_name = text_channel_name
 
-    def send_nero(self):
-        print(self.server_name)
-        guild = discord.utils.get(client.guilds, name=self.server_name)
-        print("guild is " + str(guild))
+    def send_nero(self, guild, member):
 
         voice_channel = discord.utils.get(guild.voice_channels, name=self.voice_channel_name)
         
         text_channel = discord.utils.get(guild.text_channels, name=self.text_channel_name)
 
-        # VCに参加している人のID取得
-        member = voice_channel.voice_states.keys()
-
         member_mention = []
 
         print(member)
-        if len(member) == 0:
-            return text_channel.send( self.voice_channel_name + "には誰もいません")
-        else:
-            # メンション作成
-            for i in member :
-                print(i)
-                member = "<@" + str(i) + ">"
-                member_mention.append(member)
 
-            # Botからメンション飛ばす
-            return text_channel.send( str(" ".join(member_mention)) + " そろそろ寝ませんか？")
+        # メンション作成
+        for i in member :
+            print(i)
+            member = "<@" + str(i) + ">"
+            member_mention.append(member)
+
+        # Botからメンション飛ばす
+        return text_channel.send( str(" ".join(member_mention)) + " そろそろ寝ませんか？")
 
 # 起動時に動作する処理
 @client.event
 async def on_ready():
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
+    guild = discord.utils.get(client.guilds, name=SERVER_NAME)
 
     for voice_channel_name in VOICE_CHANNEL_NAME_LIST :
-        mention_to_voice_channel = MentionToVocechannelMembers(SERVER_NAME, voice_channel_name,TEXT_CHANNEL_NAME)
+        
+        # VCに参加している人のID取得
+        voice_channel = discord.utils.get(guild.voice_channels, name=voice_channel_name)
+        member = voice_channel.voice_states.keys()
 
-        await mention_to_voice_channel.send_nero()
+        # 人がいるVCのみメンションを飛ばす
+        if len(member) != 0 :
+            mention_to_voice_channel = MentionToVocechannelMembers(SERVER_NAME, voice_channel_name, TEXT_CHANNEL_NAME)
+
+            await mention_to_voice_channel.send_nero(guild, member)
 
     await client.logout()
     await sys.exit()
